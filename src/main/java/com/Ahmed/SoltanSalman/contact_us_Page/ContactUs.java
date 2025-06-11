@@ -1,4 +1,4 @@
-package com.Ahmed.SoltanSalman.contact_us;
+package com.Ahmed.SoltanSalman.contact_us_Page;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
