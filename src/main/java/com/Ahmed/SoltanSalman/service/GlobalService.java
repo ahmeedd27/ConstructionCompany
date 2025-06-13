@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class GlobalService {
     private final GlobalRepo repo;
     public Global getData(){
-        ObjectId id=new ObjectId("6844397b8a04d239c9a7bb2e");
+        ObjectId id=new ObjectId("684be0e3317edce7abfc0294");
         return repo.findById(id).orElseThrow();
     }
 }

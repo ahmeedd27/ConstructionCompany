@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ContactPageService {
     private final ContactPageRepo repo;
     public ContactUs getData(){
-        ObjectId id=new ObjectId("68443c368a04d239c9a7bb30");
+        ObjectId id=new ObjectId("684be0fb317edce7abfc0298");
         return repo.findById(id).orElseThrow();
     }
 }

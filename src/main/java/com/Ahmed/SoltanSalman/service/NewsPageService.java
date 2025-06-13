@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class NewsPageService {
     private final NewsPageRepo repo;
     public NewsPage getData(){
-        ObjectId id=new ObjectId("6849e3221327da7d7a04c598");
+        ObjectId id=new ObjectId("684be0a4317edce7abfc0285");
         return repo.findById(id).orElseThrow();
     }
 }

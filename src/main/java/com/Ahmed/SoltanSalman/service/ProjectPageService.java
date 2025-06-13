@@ -12,7 +12,7 @@ public class ProjectPageService {
     private final ProjectPageRepo repo;
 
     public ProjectPage getData() {
-        ObjectId id=new ObjectId("684ae086ae15ac52663b9af8");
+        ObjectId id=new ObjectId("684be0be317edce7abfc028f");
        return repo.findById(id).orElseThrow();
     }
 }
