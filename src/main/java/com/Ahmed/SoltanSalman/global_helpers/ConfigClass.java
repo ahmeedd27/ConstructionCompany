@@ -21,7 +21,11 @@ public class ConfigClass {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*");
+                registry.addMapping("/**")
+                        .allowedOrigins("*") // Consider restricting to specific origins in production
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Explicitly allow PUT
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(false); // Set to true if cookies or auth headers are needed
             }
         };
     }
