@@ -1,6 +1,5 @@
-package com.Ahmed.SoltanSalman.project_functionality;
+package com.Ahmed.SoltanSalman.global_helpers;
 
-import com.Ahmed.SoltanSalman.global_helpers.SocialMedia;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

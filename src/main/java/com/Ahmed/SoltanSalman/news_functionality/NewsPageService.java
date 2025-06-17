@@ -1,10 +1,8 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.Header;
+import com.Ahmed.SoltanSalman.global_helpers.PageUpdateRequest;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -30,7 +28,7 @@ public class NewsPageService {
         return page;
     }
 
-    public NewsPage updateNewsPageHeader(NewsPageUpdateRequest request) {
+    public NewsPage updateNewsPageHeader(PageUpdateRequest request) {
         NewsPage page = temp.findOne(new Query(), NewsPage.class);
         if (page == null) throw new NoSuchElementException("No Page");
 

@@ -1,6 +1,7 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
 import com.Ahmed.SoltanSalman.global_helpers.Header;
+import com.Ahmed.SoltanSalman.global_helpers.PageUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,12 @@ public class ProjectPageController {
         return ResponseEntity.ok(service.getProjectPage());
     }
 
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping
     @Operation(summary = "Update ProjectPage", description = "Update ProjectPage")
     public ResponseEntity<ProjectPage> updateProject(
-            @RequestPart(value = "project-page", required = false) Header headerRequest ,
-            @RequestPart(value = "file" , required = false) MultipartFile file
-    ){
-        return ResponseEntity.ok(service.updateProjectPageHeader(headerRequest , file));
+            @RequestBody PageUpdateRequest request
+            ){
+        return ResponseEntity.ok(service.updateProjectPageHeader(request));
     }
 
 }

@@ -199,13 +199,30 @@ public class ProjectsService {
         Project existing = temp.findOne(q, Project.class);
         if (existing == null) throw new NoSuchElementException("Project not found");
         if (request.getHeader() != null) {
-            if (request.getHeader().getTitle() != null)
-                existing.getHeader().setTitle(request.getHeader().getTitle());
-            if (request.getHeader().getDesc() != null)
-                existing.getHeader().setDesc(request.getHeader().getDesc());
+            if (request.getHeader().getTitle() != null) {
+                if (request.getHeader().getTitle().getEn() != null)
+                    existing.getHeader().getTitle().setEn(request.getHeader().getTitle().getEn());
+
+                if (request.getHeader().getTitle().getAr() != null)
+                    existing.getHeader().getTitle().setAr(request.getHeader().getTitle().getAr());
+            }
+            if (request.getHeader().getDesc() != null) {
+                if (request.getHeader().getDesc().getEn() != null)
+                    existing.getHeader().getDesc().setEn(request.getHeader().getDesc().getEn());
+
+                if (request.getHeader().getDesc().getAr() != null)
+                    existing.getHeader().getDesc().setAr(request.getHeader().getDesc().getAr());
+            }
         }
-        if (request.getOverview() != null)
-            existing.setOverview(request.getOverview());
+        if (request.getOverview() != null){
+            if(request.getOverview().getEn() != null){
+                existing.getOverview().setEn(request.getOverview().getEn());
+            }
+            if(request.getOverview().getAr() != null){
+                existing.getOverview().setAr(request.getOverview().getAr());
+            }
+        }
+
         if (request.getObjectives() != null)
             existing.setObjectives(utils.processObjective(request.getObjectives()));
         if (request.getAchievements() != null)
