@@ -19,12 +19,11 @@ public class ConfigClass {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowCredentials(false); // خليها false لو مفيش Cookies
-        config.setAllowedOrigins(List.of("*")); // لو عايز أمان أكتر حط دومين الفرونت بس
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(List.of("*"));  // يسمح لأي دومين، لكن آمن أكثر من allowedOrigins("*")
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setMaxAge(3600L); // Cache لل Preflight
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
