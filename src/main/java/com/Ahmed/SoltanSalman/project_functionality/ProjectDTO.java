@@ -1,7 +1,7 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.Description;
-import com.Ahmed.SoltanSalman.global_helpers.Title;
+import com.Ahmed.SoltanSalman.comman_helpers.Description;
+import com.Ahmed.SoltanSalman.comman_helpers.Title;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

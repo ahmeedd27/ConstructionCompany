@@ -1,7 +1,6 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.CategoryRequest;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

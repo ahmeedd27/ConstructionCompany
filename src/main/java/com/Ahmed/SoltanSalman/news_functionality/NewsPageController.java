@@ -1,7 +1,7 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
 
-import com.Ahmed.SoltanSalman.global_helpers.PageUpdateRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.PageUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

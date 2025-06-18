@@ -1,6 +1,6 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

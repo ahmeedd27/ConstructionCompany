@@ -1,6 +1,6 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.PageUpdateRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.PageUpdateRequest;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;

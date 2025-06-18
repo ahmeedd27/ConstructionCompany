@@ -1,7 +1,7 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
 
-import com.Ahmed.SoltanSalman.global_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.mongodb.client.result.DeleteResult;

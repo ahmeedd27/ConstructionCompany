@@ -1,15 +1,12 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.Header;
-import com.Ahmed.SoltanSalman.global_helpers.PageUpdateRequest;
-import com.Ahmed.SoltanSalman.news_functionality.NewsPage;
+import com.Ahmed.SoltanSalman.comman_helpers.PageUpdateRequest;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;

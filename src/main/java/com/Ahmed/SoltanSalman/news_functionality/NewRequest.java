@@ -1,8 +1,7 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
-import com.Ahmed.SoltanSalman.global_helpers.Header;
+import com.Ahmed.SoltanSalman.comman_helpers.Header;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonMerge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

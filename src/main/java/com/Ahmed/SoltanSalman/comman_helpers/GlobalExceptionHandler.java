@@ -1,4 +1,4 @@
-package com.Ahmed.SoltanSalman.global_helpers;
+package com.Ahmed.SoltanSalman.comman_helpers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
