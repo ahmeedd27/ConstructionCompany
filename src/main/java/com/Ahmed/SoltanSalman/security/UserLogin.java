@@ -10,10 +10,8 @@ import lombok.Data;
 public class UserLogin {
     @Email(message = "email not valid")
     @NotBlank(message = "email required")
-    @NotEmpty(message = "email required")
     private String email;
     @NotBlank(message = "password required")
-    @NotEmpty(message = "password required")
-    @Size(min = 8 , message = "password must be greater than 8 characters")
+    @Size(min = 8, message = "password must be greater than 8 characters")
     private String password;
 }

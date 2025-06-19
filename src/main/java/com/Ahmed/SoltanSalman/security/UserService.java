@@ -49,7 +49,7 @@ public class UserService {
             throw new RuntimeException("Failed to revoke tokens", e);
         }
     }
-    public ResponseEntity<String> registerAdmin(UserRequest userRequest) {
+    public ResponseEntity<Map<String,String>> registerAdmin(UserRequest userRequest) {
         if (userRepo.findByEmail(userRequest.getEmail()).isPresent()) {
             throw new BadCredentialsException("Email already exists");
         }
@@ -69,9 +69,9 @@ public class UserService {
                     .isRevoked(false)
                     .build();
             temp.save(token , "tokens");
-
-
-            return ResponseEntity.ok(jwt);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwt);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException("Admin registration failed", e);
         }
@@ -79,7 +79,7 @@ public class UserService {
 
 
 
-    public ResponseEntity<String> login(UserLogin userLogin) {
+    public ResponseEntity<Map<String, String>> login(UserLogin userLogin) {
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword())
@@ -97,8 +97,9 @@ public class UserService {
                     .isRevoked(false)
                     .build();
             temp.save(token , "tokens");
-
-            return ResponseEntity.ok(jwt);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwt);
+            return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid email or password");
         } catch (Exception e) {

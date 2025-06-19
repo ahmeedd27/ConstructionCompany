@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "User", description = "Endpoints related to user authentication and profile management")
@@ -20,7 +22,7 @@ public class UserController {
 
     @PostMapping("/register/admin")
     @Operation(summary = "Register a new admin user", description = "Allows an admin to register another admin user")
-    public ResponseEntity<String> registerAdmin(
+    public ResponseEntity<Map<String, String>> registerAdmin(
             @Valid @RequestBody UserRequest userRequest
     ) {
         return userService.registerAdmin(userRequest);
@@ -35,7 +37,7 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = "User login", description = "Authenticates the user and returns a JWT token")
-    public ResponseEntity<String> login(
+    public ResponseEntity<Map<String, String>> login(
             @Valid @RequestBody UserLogin userLogin
     ) {
         return userService.login(userLogin);

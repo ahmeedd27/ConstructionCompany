@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -12,8 +13,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document(collection = "Global")
 public class Global {
+    @Id
+    private String _id;
     private String logo;
-  private SocialMedia socialMedia;
+    private SocialMedia socialMedia;
     private String address;
     private String phone;
     private String email;
