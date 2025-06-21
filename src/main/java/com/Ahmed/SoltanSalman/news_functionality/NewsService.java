@@ -2,6 +2,7 @@ package com.Ahmed.SoltanSalman.news_functionality;
 
 
 import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.Header;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.mongodb.client.result.DeleteResult;
@@ -53,31 +54,28 @@ public class NewsService {
     }
 
 
-    public New addNew(NewRequest request) {
+    public New addNew(CreateNewsRequest request) {
         if (request == null) throw new IllegalArgumentException("no valid");
         Map<String, Object> options = ObjectUtils.asMap(
                 "resource_type", "image",
                 "timestamp", System.currentTimeMillis() / 1000
         );
         String url = "";
-        if (request.getImageBase64() != null && !request.getImageBase64().isEmpty()) {
-            String base64Data = request.getImageBase64().split(",")[1];
+        String base64Data = request.getImageBase64().split(",")[1];
             try {
                 byte[] fileData = Base64.getDecoder().decode(base64Data);
                 Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
                 url = uploadResult.get("secure_url").toString();
-                request.getHeader().setImgUrl(url);
             } catch (IOException e) {
                 throw new RuntimeException("Image upload problem");
             }
-        }
 
-        New savedNew = temp.save(New.builder()
-                .slug(generateSlug(request.getHeader().getTitle().getEn()))
-                .header(request.getHeader())
+  New savedNew = temp.save(New.builder()
+                .slug(generateSlug(request.getTitle().getEn()))
+                .header( new Header(request.getTitle() , request.getDesc() , url))
                 .article(request.getArticle())
                 .createdAt(new Date())
-                .isFeatured(request.getIsFeatured())
+                .isFeatured(request.isFeatured())
                 .category(processCategory(request.getCategory()))
                 .build(), "News");
         NewDto dto = NewDto.builder()

@@ -3,6 +3,7 @@ package com.Ahmed.SoltanSalman.news_functionality;
 import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class NewsController {
 
     @Operation(summary = "Add News", description = "Create a new news article")
     @PostMapping
-    public ResponseEntity<New> addNews(@RequestBody NewRequest request) {
+    public ResponseEntity<New> addNews(@RequestBody @Valid CreateNewsRequest request) {
         return ResponseEntity.ok(newsService.addNew(request));
     }
 

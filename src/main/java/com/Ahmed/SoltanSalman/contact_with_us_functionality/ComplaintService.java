@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplaintService {
     private final MongoTemplate temp;
+    private final EmailService service;
     public Complaint addComplaint(ComplaintRequest request){
-        return temp.save(Complaint.builder()
+       Complaint c= temp.save(Complaint.builder()
                 .fullName(request.getName())
                 .email(request.getEmail())
                 .subject(request.getSubject())
                 .message(request.getMessage())
                 .build() , "ContactPost");
+       service.sendComplaintConfirmation(request.getEmail() , request.getName());
+       return c;
     }
 }
