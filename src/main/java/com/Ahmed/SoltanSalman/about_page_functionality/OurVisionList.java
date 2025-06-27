@@ -1,4 +1,4 @@
-package com.Ahmed.SoltanSalman.home_functionality;
+package com.Ahmed.SoltanSalman.about_page_functionality;
 
 import com.Ahmed.SoltanSalman.comman_helpers.Description;
 import com.Ahmed.SoltanSalman.comman_helpers.Title;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Info {
+public class OurVisionList {
     private Title title;
     private Description desc;
+
 }

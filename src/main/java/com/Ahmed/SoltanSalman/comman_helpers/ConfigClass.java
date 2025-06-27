@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,11 +16,8 @@ import java.util.Random;
 @Configuration
 public class ConfigClass {
 
-    private final Environment env;
-
-    public ConfigClass(Environment env) {
-        this.env = env;
-    }
+    @Value("${spring.mail.password}")
+    private String password;
 
     @Bean
     public JavaMailSender javaMailSender() {
@@ -30,7 +26,7 @@ public class ConfigClass {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("ahmdbrl811@gmail.com");
-        mailSender.setPassword(env.getProperty("spring.mail.password"));
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", true);

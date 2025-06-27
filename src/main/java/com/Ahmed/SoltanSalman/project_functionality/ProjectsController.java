@@ -1,8 +1,9 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
-import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.COARequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,23 +48,14 @@ public class ProjectsController {
         return ResponseEntity.ok(service.addEmployee(employeeRequest));
     }
 
-    @GetMapping("/categories")
-    @Operation(summary = "Get Categories Of The Projects", description = "Get Categories Of The Projects")
-    public ResponseEntity<List<ProjectCategory>> getAllCategories() {
-        return ResponseEntity.ok(service.getAllCategories());
-    }
 
-    @PostMapping("/categories")
-    @Operation(summary = "Add CategoryRequest", description = "Add new CategoryRequest")
-    public ResponseEntity<ProjectCategory> addCategory(
-            @RequestBody CategoryRequest category) {
-        return ResponseEntity.ok(service.addCategory(category));
-    }
+
+
 
     @PostMapping
     @Operation(summary = "Add Project", description = "Add project with base64 images")
     public ResponseEntity<Project> addProjectWithImages(
-            @RequestBody ProjectRequest request) {
+            @RequestBody @Valid CreateProjectRequest request) {
         return ResponseEntity.ok(service.addProjectWithImages(request));
     }
 

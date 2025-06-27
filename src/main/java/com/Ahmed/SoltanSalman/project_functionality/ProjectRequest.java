@@ -19,6 +19,5 @@ public class ProjectRequest {
     private List<Employee> team;
     private Specification specification;
     private State state;
-    private ProjectCategory category;
     private List<ImageUpload> images;
 }

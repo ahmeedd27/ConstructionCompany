@@ -1,6 +1,6 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
-import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.COARequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -51,16 +51,4 @@ public class NewsController {
         return ResponseEntity.ok(newsService.deleteNewBySlug(slug));
     }
 
-    @GetMapping("/categories")
-    @Operation(summary = "Get Categories Of The News", description = "Get Categories Of The News")
-    public ResponseEntity<List<NewsCategory>> getAllCategories() {
-        return ResponseEntity.ok(newsService.getAllNewsCategories());
-    }
-
-    @PostMapping("/categories")
-    @Operation(summary = "Add CategoryRequest", description = "Add new CategoryRequest")
-    public ResponseEntity<NewsCategory> addCategory(
-            @RequestBody CategoryRequest category) {
-        return ResponseEntity.ok(newsService.addCategory(category));
-    }
 }

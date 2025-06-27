@@ -22,6 +22,6 @@ public class Home {
     private Header aboutUs;
     private List<ProjectDTO> projects;
     private List<NewDto> newsDtoList;
-    private AboutAbha aboutAbha;
-    private List<AboutNumbers> abhaNumbers;
+    private Header aboutAbha;
+
 }

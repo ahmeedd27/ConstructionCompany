@@ -35,4 +35,21 @@ public class EmailService {
             throw new RuntimeException("فشل إرسال الإيميل: " + e.getMessage());
         }
     }
+    public void sendComplaintToReceiverEmail( String msg) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo("mahmoudapoatya91@gmail.com");
+helper.setSubject("i am a user have some problems");
+            helper.setText(
+                    msg,
+                    false
+            );
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("فشل إرسال الإيميل: " + e.getMessage());
+        }
+    }
 }

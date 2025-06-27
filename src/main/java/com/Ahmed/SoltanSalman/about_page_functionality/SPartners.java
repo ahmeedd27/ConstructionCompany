@@ -1,4 +1,4 @@
-package com.Ahmed.SoltanSalman.home_functionality;
+package com.Ahmed.SoltanSalman.about_page_functionality;
 
 import com.Ahmed.SoltanSalman.comman_helpers.Description;
 import com.Ahmed.SoltanSalman.comman_helpers.Title;
@@ -11,9 +11,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AboutAbha {
+public class SPartners {
     private Title title;
     private Description desc;
-    private String imgUrl;
-    private List<Info> infoAbout;
+    private List<Title> texts;
+
 }

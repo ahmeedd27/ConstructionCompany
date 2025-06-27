@@ -1,8 +1,10 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
 
-import com.Ahmed.SoltanSalman.comman_helpers.CategoryRequest;
+import com.Ahmed.SoltanSalman.comman_helpers.COARequest;
 import com.Ahmed.SoltanSalman.comman_helpers.Header;
+import com.Ahmed.SoltanSalman.home_functionality.Home;
+import com.Ahmed.SoltanSalman.project_functionality.ProjectDTO;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.mongodb.client.result.DeleteResult;
@@ -23,22 +25,6 @@ public class NewsService {
     private final Cloudinary cloudinary;
     private final Random random;
 
-
-    public NewsCategory processCategory(NewsCategory request) {
-        if (request.get_id() != null) {
-            Query q = new Query();
-            q.addCriteria(Criteria.where("_id").is(request.get_id()));
-            if (temp.findOne(q, NewsCategory.class) != null) {
-                return temp.findOne(q, NewsCategory.class);
-            } else {
-                throw new NoSuchElementException("Not Found");
-            }
-        } else if (request.getAr() == null || request.getEn() == null) {
-            throw new IllegalArgumentException("Not Valid");
-        } else {
-            return temp.save(request, "NewsCategories");
-        }
-    }
 
     public String generateSlug(String baseName) {
         if (baseName == null || baseName.trim().isEmpty()) {
@@ -62,27 +48,25 @@ public class NewsService {
         );
         String url = "";
         String base64Data = request.getImageBase64().split(",")[1];
-            try {
-                byte[] fileData = Base64.getDecoder().decode(base64Data);
-                Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
-                url = uploadResult.get("secure_url").toString();
-            } catch (IOException e) {
-                throw new RuntimeException("Image upload problem");
-            }
+        try {
+            byte[] fileData = Base64.getDecoder().decode(base64Data);
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
+            url = uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Image upload problem");
+        }
 
-  New savedNew = temp.save(New.builder()
+        New savedNew = temp.save(New.builder()
                 .slug(generateSlug(request.getTitle().getEn()))
-                .header( new Header(request.getTitle() , request.getDesc() , url))
+                .header(new Header(request.getTitle(), request.getDesc(), url))
                 .article(request.getArticle())
                 .createdAt(new Date())
                 .isFeatured(request.isFeatured())
-                .category(processCategory(request.getCategory()))
                 .build(), "News");
         NewDto dto = NewDto.builder()
                 ._id(savedNew.get_id())
                 .slug(savedNew.getSlug())
                 .header(savedNew.getHeader())
-                .category(savedNew.getCategory())
                 .isFeatured(savedNew.getIsFeatured())
                 .createdAt(savedNew.getCreatedAt())
                 .build();
@@ -91,6 +75,12 @@ public class NewsService {
         if (page != null) {
             page.getNewsDtoList().add(dto);
             temp.save(page, "NewsPage");
+        }
+        Home h = temp.findOne(new Query(), Home.class);
+        if (h != null) {
+            h.getNewsDtoList().addFirst(dto);
+            h.getNewsDtoList().removeLast();
+            temp.save(h, "Home");
         }
         return savedNew;
     }
@@ -132,15 +122,6 @@ public class NewsService {
 
             existed.setArticle(existingArticle);
         }
-        if (request.getCategory() != null) {
-            NewsCategory existingCategory = existed.getCategory();
-            NewsCategory incomingCategory = request.getCategory();
-            if (incomingCategory.getEn() != null)
-                existingCategory.setEn(incomingCategory.getEn());
-            if (incomingCategory.getAr() != null)
-                existingCategory.setAr(incomingCategory.getAr());
-            existed.setCategory(existingCategory);
-        }
         if (request.getIsFeatured() != null)
             existed.setIsFeatured(request.getIsFeatured());
 
@@ -160,6 +141,8 @@ public class NewsService {
             }
         }
         New saved = temp.save(existed, "News");
+
+        //update NewsPage
         NewsPage page = temp.findOne(new Query(), NewsPage.class);
         if (page != null && !page.getNewsDtoList().isEmpty()) {
             List<NewDto> list = page.getNewsDtoList();
@@ -169,7 +152,6 @@ public class NewsService {
                             .createdAt(saved.getCreatedAt())
                             .isFeatured(saved.getIsFeatured())
                             .header(saved.getHeader())
-                            .category(saved.getCategory())
                             .slug(saved.getSlug())
                             .build();
                     list.set(i, dto);
@@ -180,64 +162,75 @@ public class NewsService {
             temp.save(page, "NewsPage");
         }
 
+        //update Home Page
+        Home h = temp.findOne(new Query(), Home.class);
+        if (h != null && !h.getNewsDtoList().isEmpty()) {
+            List<NewDto> list = h.getNewsDtoList();
+            for (int i = 0; i < list.size(); i++) {
+                if (slug.equals(list.get(i).getSlug())) {
+                    NewDto dto = NewDto.builder()
+                            .createdAt(saved.getCreatedAt())
+                            .isFeatured(saved.getIsFeatured())
+                            .header(saved.getHeader())
+                            .slug(saved.getSlug())
+                            .build();
+                    list.set(i, dto);
+                    break;
+                }
+            }
+            h.setNewsDtoList(list);
+            temp.save(h, "Home");
+        }
+
         return saved;
     }
 
 
-
-    public List<New> getAllNews(){
-        List<New> list=temp.findAll(New.class);
-        if(list.isEmpty()){
+    public List<New> getAllNews() {
+        List<New> list = temp.findAll(New.class);
+        if (list.isEmpty()) {
             throw new NoSuchElementException("No elements");
         }
         return list;
     }
-    public New getNewBySlug(String slug){
-        if(slug==null || slug.isEmpty()) throw new IllegalArgumentException("No Slug");
-      Query q=new Query();
-      q.addCriteria(Criteria.where("slug").is(slug));
-      New n=temp.findOne(q , New.class);
-      if(n==null) throw new NoSuchElementException("New not found with slug: " + slug);
-      return n;
+
+    public New getNewBySlug(String slug) {
+        if (slug == null || slug.isEmpty()) throw new IllegalArgumentException("No Slug");
+        Query q = new Query();
+        q.addCriteria(Criteria.where("slug").is(slug));
+        New n = temp.findOne(q, New.class);
+        if (n == null) throw new NoSuchElementException("New not found with slug: " + slug);
+        return n;
     }
-    public String deleteNewBySlug(String slug){
-        if(slug==null || slug.isEmpty()) throw new IllegalArgumentException("No Slug");
-        Query q=new Query();
+
+    public String deleteNewBySlug(String slug) {
+        if (slug == null || slug.isEmpty()) throw new IllegalArgumentException("No Slug");
+        Query q = new Query();
         q.addCriteria(Criteria.where("slug").is(slug));
         DeleteResult result = temp.remove(q, New.class);
         if (result.getDeletedCount() == 0) {
             throw new NoSuchElementException("No news found with the given slug");
         }
-        NewsPage page=temp.findOne(new Query(), NewsPage.class);
-        if(page != null && page.getNewsDtoList() != null && !page.getNewsDtoList().isEmpty()){
-            List<NewDto> list=page.getNewsDtoList();
-           boolean removed=list.removeIf(dto -> slug.equals(dto.getSlug()));
-           if(removed){
-               page.setNewsDtoList(list);
-               temp.save(page , "NewsPage");
-           }
+        NewsPage page = temp.findOne(new Query(), NewsPage.class);
+        Home h = temp.findOne(new Query(), Home.class);
+        if (page != null && page.getNewsDtoList() != null && !page.getNewsDtoList().isEmpty()) {
+            List<NewDto> list = page.getNewsDtoList();
+            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
+            if (removed) {
+                page.setNewsDtoList(list);
+                temp.save(page, "NewsPage");
+            }
         }
+        if (h != null && h.getNewsDtoList() != null && !h.getNewsDtoList().isEmpty()) {
+            List<NewDto> list = h.getNewsDtoList();
+            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
+            if (removed) {
+                h.setNewsDtoList(list);
+                temp.save(h, "Home");
+            }
+        }
+
         return "Deleted Successfully";
-    }
-
-    public List<NewsCategory> getAllNewsCategories(){
-        List<NewsCategory> categories = temp.findAll(NewsCategory.class);
-        if (categories.isEmpty()) {
-            throw new NoSuchElementException("No Elements");
-        }
-        return categories;
-    }
-    public NewsCategory addCategory(CategoryRequest category) {
-        if (category != null) {
-           NewsCategory c = new NewsCategory(
-                    category.getAr(),
-                    category.getEn()
-            );
-            return temp.save(c, "NewsCategories");
-
-        } else {
-            throw new IllegalArgumentException("this operation can not be done");
-        }
     }
 
 

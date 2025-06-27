@@ -17,6 +17,7 @@ public class ComplaintService {
                 .message(request.getMessage())
                 .build() , "ContactPost");
        service.sendComplaintConfirmation(request.getEmail() , request.getName());
+       service.sendComplaintToReceiverEmail(request.getMessage());
        return c;
     }
 }

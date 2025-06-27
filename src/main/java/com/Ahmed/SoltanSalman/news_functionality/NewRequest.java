@@ -11,11 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewRequest {
     private Header header;
     private Article article;
-    private NewsCategory category;
     private Boolean isFeatured;
     private String imageBase64;
 }
