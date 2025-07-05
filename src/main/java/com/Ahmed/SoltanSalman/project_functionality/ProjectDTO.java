@@ -25,4 +25,5 @@ public class ProjectDTO {
      private Title title;
      private Description desc;
      private Date createdAt;
+    private boolean isInvestment;
 }

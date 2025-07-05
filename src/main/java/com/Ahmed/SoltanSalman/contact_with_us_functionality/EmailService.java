@@ -21,13 +21,13 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("شكوتك تحت المراجعة");
             helper.setText(
-                "مرحبًا " + userName + "،\n\n" +
-                "لقد استلمنا شكواك، وجاري مراجعتها من قبل الفريق المختص " +
-                        "في شركتنا للمقاولات العامه.\n" +
-                "سنقوم بالرد عليك في أقرب وقت ممكن.\n\n" +
-                "شكرًا لتواصلك معنا.\n\n" +
-                "فريق الدعم",
-                false
+                    "مرحبًا " + userName + "،\n\n" +
+                            "لقد استلمنا شكواك، وجاري مراجعتها من قبل الفريق المختص " +
+                            "في شركتنا للمقاولات العامه.\n" +
+                            "سنقوم بالرد عليك في أقرب وقت ممكن.\n\n" +
+                            "شكرًا لتواصلك معنا.\n\n" +
+                            "فريق الدعم",
+                    false
             );
 
             mailSender.send(message);
@@ -35,13 +35,14 @@ public class EmailService {
             throw new RuntimeException("فشل إرسال الإيميل: " + e.getMessage());
         }
     }
-    public void sendComplaintToReceiverEmail( String msg) {
+
+    public void sendComplaintToReceiverEmail(String msg) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setTo("mahmoudapoatya91@gmail.com");
-helper.setSubject("i am a user have some problems");
+            helper.setTo("3li.brol91@gmail.com");
+            helper.setSubject("User Send Message");
             helper.setText(
                     msg,
                     false

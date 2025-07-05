@@ -14,7 +14,7 @@ public class HomeController {
     private final HomeService service;
     @GetMapping
     @Operation(summary = "Get Home Page", description = "Fetch Home page content")
-    public ResponseEntity<Home> home(){
+    public ResponseEntity<HomeDto> home(){
         return ResponseEntity.ok(service.getHome());
     }
     @PutMapping

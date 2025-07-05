@@ -1,8 +1,13 @@
 package com.Ahmed.SoltanSalman.home_functionality;
 
+import com.Ahmed.SoltanSalman.news_functionality.New;
+import com.Ahmed.SoltanSalman.news_functionality.NewDto;
+import com.Ahmed.SoltanSalman.project_functionality.Project;
+import com.Ahmed.SoltanSalman.project_functionality.ProjectDTO;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -19,10 +25,41 @@ public class HomeService {
     private final MongoTemplate temp;
     private final Cloudinary cloudinary;
 
-    public Home getHome() {
+    public HomeDto getHome() {
+        Query q = new Query();
+        Query projectQuery = new Query()
+                .with(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .limit(6);
+        List<Project> projects = temp.find(projectQuery, Project.class, "Projects");
+        List<ProjectDTO> projectDTOs = projects.stream().map(p -> ProjectDTO.builder()
+                ._id(p.get_id())
+                .slug(p.getSlug())
+                .imgUrl(p.getHeader().getImgUrl())
+                .title(p.getHeader().getTitle())
+                .desc(p.getHeader().getDesc())
+                .state(p.getState())
+                .createdAt(p.getCreatedAt())
+                .build()).toList();
+        Query newsQuery = new Query()
+                .with(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .limit(3);
+        List<New> newsList = temp.find(newsQuery, New.class, "News");
+        List<NewDto> newsDTOs = newsList.stream().map(n -> NewDto.builder()
+                ._id(n.get_id())
+                .slug(n.getSlug())
+                .header(n.getHeader())
+                .createdAt(n.getCreatedAt())
+                .isFeatured(n.getIsFeatured())
+                .build()).toList();
         Home h = temp.findOne(new Query(), Home.class);
         if (h == null) throw new NoSuchElementException();
-        return h;
+        return HomeDto.builder()
+                .header(h.getHeader())
+                .aboutUs(h.getAboutUs())
+                .projects(projectDTOs)
+                .newsDtoList(newsDTOs)
+                .aboutAbha(h.getAboutAbha())
+                .build();
     }
 
     public Home updateHomePage(HomeUpdateRequest request) {
@@ -40,32 +77,33 @@ public class HomeService {
             if (request.getHeaderDescription().getAr() != null) {
                 h.getHeader().getDesc().setAr(request.getHeaderDescription().getAr());
             }
-            if (request.getHeaderDescription().getAr() != null) {
-                h.getHeader().getDesc().setAr(request.getHeaderDescription().getAr());
+            if (request.getHeaderDescription().getEn() != null) {
+                h.getHeader().getDesc().setEn(request.getHeaderDescription().getEn());
             }
         }
         if (request.getLinkVid() != null) {
             h.getHeader().setLink(request.getLinkVid());
         }
-        if (request.getHeaderImageBase64() != null && !request.getHeaderImageBase64().isEmpty()) {
+        if (request.getHeaderImageBase64() != null) {
             Map<String, Object> options = ObjectUtils.asMap(
                     "resource_type", "image",
                     "timestamp", System.currentTimeMillis() / 1000
             );
             String url = "";
-            int count=0;
-            for(String img:request.getHeaderImageBase64()){
-                String base64Data = img.split(",")[1];
+            for (HomeImages hii : request.getHeaderImageBase64()) {
+                String base64Data = hii.getImgUrl().split(",")[1];
                 try {
                     byte[] fileData = Base64.getDecoder().decode(base64Data);
                     Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
                     url = uploadResult.get("secure_url").toString();
-                    h.getHeader().getImgUrls().set(count, url);
-                    count++;
+                    HomeImages hi = new HomeImages(hii.getId(), url);
+                    h.getHeader().getImgUrls().set(hii.getId() - 1, hi);
+
                 } catch (IOException e) {
                     throw new RuntimeException("Image upload problem");
                 }
             }
+
 
         }
         if (request.getAboutUsTitle() != null) {
@@ -132,7 +170,7 @@ public class HomeService {
                 throw new RuntimeException("Image upload problem");
             }
         }
-        temp.save(h , "Home");
+        temp.save(h, "Home");
         return h;
     }
 

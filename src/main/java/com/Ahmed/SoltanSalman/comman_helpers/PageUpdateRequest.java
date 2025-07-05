@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageUpdateRequest {
-    private Header header;
+    private Title title;
+    private Description desc;
     private String imageBase64;
 }

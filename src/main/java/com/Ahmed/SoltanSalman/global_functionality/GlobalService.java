@@ -41,21 +41,14 @@ public class GlobalService {
                 throw new RuntimeException("Image upload problem");
             }
         }
-        if(request.getSocialMedia()!=null){
-            if(request.getSocialMedia().getX()!=null){
-                g.getSocialMedia().setX(request.getSocialMedia().getX());
+        if(request.getAddress()!=null){
+            if(request.getAddress().getAr()!=null){
+                g.getAddress().setAr(request.getAddress().getAr());
             }
-            if(request.getSocialMedia().getFacebook()!=null){
-                g.getSocialMedia().setFacebook(request.getSocialMedia().getFacebook());
+            if(request.getAddress().getEn()!=null){
+                g.getAddress().setEn(request.getAddress().getEn());
             }
-            if(request.getSocialMedia().getInstagram()!=null){
-                g.getSocialMedia().setInstagram(request.getSocialMedia().getInstagram());
-            }
-            if(request.getSocialMedia().getLinkedin()!=null){
-                g.getSocialMedia().setLinkedin(request.getSocialMedia().getLinkedin());
-            }
-         }
-        if(request.getAddress()!=null) g.setAddress(request.getAddress());
+        }
         if(request.getEmail()!=null) g.setEmail(request.getEmail());
         if (request.getPhone()!=null) g.setPhone(request.getPhone());
         if(request.getWorkingHours()!=null) g.setWorkingHours(request.getWorkingHours());

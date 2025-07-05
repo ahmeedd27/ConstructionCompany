@@ -1,14 +1,15 @@
-package com.Ahmed.SoltanSalman.comman_helpers;
+package com.Ahmed.SoltanSalman.home_functionality;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Image {
+public class HomeImages {
+    @Field("id")
     private int id;
     private String imgUrl;
-    private Title title;
 }

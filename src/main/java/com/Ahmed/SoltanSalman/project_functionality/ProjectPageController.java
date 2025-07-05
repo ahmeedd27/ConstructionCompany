@@ -17,15 +17,15 @@ public class ProjectPageController {
 
     @GetMapping()
     @Operation(summary = "Project Page", description = "Fetches the Project Page")
-    public ResponseEntity<ProjectPage> getAllProjects(){
+    public ResponseEntity<ProjectPageDTO> getProjectPage() {
         return ResponseEntity.ok(service.getProjectPage());
     }
 
     @PutMapping
     @Operation(summary = "Update ProjectPage", description = "Update ProjectPage")
-    public ResponseEntity<ProjectPage> updateProject(
+    public ResponseEntity<ProjectPage> updateProjectPage(
             @RequestBody PageUpdateRequest request
-            ){
+    ) {
         return ResponseEntity.ok(service.updateProjectPageHeader(request));
     }
 

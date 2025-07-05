@@ -15,5 +15,5 @@ public class HomeHeader {
     private Title title;
     private Description desc;
     private String link;
-    private List<String> imgUrls;
+    private List<HomeImages> imgUrls;
 }

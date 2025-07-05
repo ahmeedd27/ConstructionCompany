@@ -56,7 +56,7 @@ public class ProjectsController {
     @Operation(summary = "Add Project", description = "Add project with base64 images")
     public ResponseEntity<Project> addProjectWithImages(
             @RequestBody @Valid CreateProjectRequest request) {
-        return ResponseEntity.ok(service.addProjectWithImages(request));
+        return ResponseEntity.ok(service.addProject(request));
     }
 
 

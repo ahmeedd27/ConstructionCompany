@@ -15,7 +15,7 @@ public class HomeUpdateRequest {
     private Title headerTitle;
     private Description headerDescription;
     private String linkVid;
-    private List<String> headerImageBase64;
+    private List<HomeImages> headerImageBase64;
     private Title aboutUsTitle;
     private Description aboutUsDescription;
     private String aboutUsImageBase64;

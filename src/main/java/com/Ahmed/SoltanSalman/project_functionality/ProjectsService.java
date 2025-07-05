@@ -1,12 +1,8 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
 
-import com.Ahmed.SoltanSalman.comman_helpers.COARequest;
 import com.Ahmed.SoltanSalman.comman_helpers.Header;
-import com.Ahmed.SoltanSalman.comman_helpers.Image;
-import com.Ahmed.SoltanSalman.comman_helpers.ImageUpload;
 import com.Ahmed.SoltanSalman.home_functionality.Home;
-import com.Ahmed.SoltanSalman.news_functionality.NewDto;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.mongodb.client.result.DeleteResult;
@@ -16,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -55,26 +52,6 @@ public class ProjectsService {
         query.addCriteria(Criteria.where("slug").is(slug));
         DeleteResult deleteResult = temp.remove(query, Project.class);
         if (deleteResult.getDeletedCount() == 0) throw new IllegalArgumentException();
-
-        ProjectPage page = temp.findOne(new Query(), ProjectPage.class);
-        Home h=temp.findOne(new Query() , Home.class);
-
-        if (page != null && page.getProjects() != null && !page.getProjects().isEmpty()) {
-            List<ProjectDTO> list = page.getProjects();
-            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
-            if (removed) {
-                page.setProjects(list);
-                temp.save(page, "ProjectPage");
-            }
-        }
-        if(h!=null && h.getProjects()!=null && !h.getProjects().isEmpty()){
-            List<ProjectDTO> list = h.getProjects();
-            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
-            if (removed) {
-                h.setProjects(list);
-                temp.save(h, "Home");
-            }
-        }
         return "Project deleted successfully.";
 
     }
@@ -87,7 +64,6 @@ public class ProjectsService {
         }
         return employees;
     }
-
 
 
     public Employee addEmployee(EmployeeRequest employee) {
@@ -103,37 +79,26 @@ public class ProjectsService {
         }
     }
 
-    public Project addProjectWithImages(CreateProjectRequest request) {
+    public Project addProject(CreateProjectRequest request) {
 
-        List<String> imgUrls = new ArrayList<>();
+
+        if (request == null) throw new IllegalArgumentException("no valid");
         Map<String, Object> options = ObjectUtils.asMap(
                 "resource_type", "image",
                 "timestamp", System.currentTimeMillis() / 1000
         );
-
-        List<Image> img = new ArrayList<>();
-        List<ImageUpload> imageUploads = request.getImages();
-
-        if (imageUploads != null && !imageUploads.isEmpty()) {
-            for (ImageUpload imageUpload : imageUploads) {
-                try {
-                   int count=1;
-                    String base64Data = imageUpload.getImageFile().split(",")[1];
-                    byte[] fileData = Base64.getDecoder().decode(base64Data);
-                    Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
-                    String url = uploadResult.get("secure_url").toString();
-                    imgUrls.add(url);
-                    img.add(new Image(count++ ,url, imageUpload.getTitle()));
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to upload image: " + e.getMessage());
-                }
-            }
-
+        String url = "";
+        String base64Data = request.getImageBase64().split(",")[1];
+        try {
+            byte[] fileData = Base64.getDecoder().decode(base64Data);
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
+            url = uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Image upload problem");
         }
         String generatedSlug = utils.generateSlug(
                 request.getTitle().getEn() != null ?
                         request.getTitle().getEn() : "project");
-
 
         List<Employee> emps = new ArrayList<>();
         for (Employee e : request.getTeam()) {
@@ -144,8 +109,8 @@ public class ProjectsService {
                 throw new NoSuchElementException("Employee not found with id: " + e.get_id());
             }
         }
-        Header header = new Header(request.getTitle(), request.getDesc(), imgUrls.get(0));
-        Project savedProject = temp.save(
+        Header header = new Header(request.getTitle(), request.getDesc(), url);
+        return temp.save(
                 Project.builder()
                         .slug(generatedSlug)
                         .header(header)
@@ -155,32 +120,11 @@ public class ProjectsService {
                         .team(emps)
                         .specification(request.getSpecification())
                         .state(utils.processState(request.getStateInEnglish()))
-                        .images(img)
                         .createdAt(new Date())
+                        .isInvestment(request.isInvestment())
                         .build(), "Projects"
         );
-        ProjectDTO projectDTO = ProjectDTO.builder()
-                ._id(savedProject.get_id())
-                .slug(savedProject.getSlug())
-                .imgUrl(savedProject.getHeader().getImgUrl())
-                .state(savedProject.getState())
-                .title(savedProject.getHeader().getTitle())
-                .desc(savedProject.getHeader().getDesc())
-                .createdAt(savedProject.getCreatedAt())
-                .build();
 
-        ProjectPage page = temp.findOne(new Query(), ProjectPage.class);
-        if (page != null) {
-            page.getProjects().add(projectDTO);
-            temp.save(page, "ProjectPage");
-        }
-        Home h = temp.findOne(new Query(), Home.class);
-        if (h != null) {
-            h.getProjects().addFirst(projectDTO);
-            h.getProjects().removeLast();
-            temp.save(h, "Home");
-        }
-        return savedProject;
     }
 
 
@@ -203,6 +147,21 @@ public class ProjectsService {
 
                 if (request.getHeader().getDesc().getAr() != null)
                     existing.getHeader().getDesc().setAr(request.getHeader().getDesc().getAr());
+            }
+        }
+        if (request.getImageBase64() != null && !request.getImageBase64().isEmpty()) {
+            Map<String, Object> options = ObjectUtils.asMap(
+                    "resource_type", "image",
+                    "timestamp", System.currentTimeMillis() / 1000
+            );
+            try {
+                String base64Data = request.getImageBase64().split(",")[1];
+                byte[] fileData = Base64.getDecoder().decode(base64Data);
+                Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData, options);
+                String url = uploadResult.get("secure_url").toString();
+                existing.getHeader().setImgUrl(url);
+            } catch (IOException e) {
+                throw new RuntimeException("Image upload problem");
             }
         }
         if (request.getOverview() != null) {
@@ -246,86 +205,10 @@ public class ProjectsService {
             }
             existing.setTeam(emps);
         }
-        if (request.getImages() != null && !request.getImages().isEmpty()) {
-            List<Image> finalImgs = new ArrayList<>();
-            for (ImageUpload imgReq : request.getImages()) {
-                if (imgReq.getImageFile() != null && !imgReq.getImageFile().isEmpty()) {
-                    try {
-                        int count=1;
-                        byte[] decoded = Base64.getDecoder().decode(imgReq.getImageFile().split(",")[1]);
-                        Map<String, Object> options = ObjectUtils.asMap(
-                                "resource_type", "image",
-                                "timestamp", System.currentTimeMillis() / 1000
-                        );
-                        Map<?, ?> uploadResult = cloudinary.uploader().upload(decoded, options);
-                        String imgUrl = uploadResult.get("secure_url").toString();
-                        finalImgs.add(new Image(count++ ,imgUrl, imgReq.getTitle()));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Image upload failed");
-                    }
-                } else {
-                    // No new image, keep existing or skip
-                    throw new IllegalArgumentException("Missing base64 for new image");
-                }
-            }
-
-            // Update main image in header
-            if (!finalImgs.isEmpty()) {
-                existing.getHeader().setImgUrl(finalImgs.get(0).getImgUrl());
-            }
-
-            existing.setImages(finalImgs); // or merge instead of replace
+        if(request.getIsInvestment()!=null){
+            existing.setInvestment(request.getIsInvestment());
         }
-
-        Project saved = temp.save(existing, "Projects");
-
-        //  Update ProjectPage
-        ProjectPage page = temp.findOne(new Query(), ProjectPage.class);
-        if (page != null && page.getProjects() != null) {
-            List<ProjectDTO> list = page.getProjects();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getSlug().equals(slug)) {
-                    ProjectDTO updatedDTO = ProjectDTO.builder()
-                            ._id(saved.get_id())
-                            .slug(saved.getSlug())
-                            .imgUrl(saved.getHeader().getImgUrl())
-                            .state(saved.getState())
-                            .title(saved.getHeader().getTitle())
-                            .desc(saved.getHeader().getDesc())
-                            .createdAt(saved.getCreatedAt())
-                            .build();
-                    list.set(i, updatedDTO);
-                    break;
-                }
-            }
-            page.setProjects(list);
-            temp.save(page, "ProjectPage");
-        }
-
-        //update home update
-       Home h = temp.findOne(new Query(), Home.class);
-        if (h != null && h.getProjects() != null) {
-            List<ProjectDTO> list = h.getProjects();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getSlug().equals(slug)) {
-                    ProjectDTO updatedDTO = ProjectDTO.builder()
-                            ._id(saved.get_id())
-                            .slug(saved.getSlug())
-                            .imgUrl(saved.getHeader().getImgUrl())
-                            .state(saved.getState())
-                            .title(saved.getHeader().getTitle())
-                            .desc(saved.getHeader().getDesc())
-                            .createdAt(saved.getCreatedAt())
-                            .build();
-                    list.set(i, updatedDTO);
-                    break;
-                }
-            }
-            h.setProjects(list);
-            temp.save(h, "Home");
-        }
-
-        return saved;
+        return temp.save(existing, "Projects");
     }
 
 

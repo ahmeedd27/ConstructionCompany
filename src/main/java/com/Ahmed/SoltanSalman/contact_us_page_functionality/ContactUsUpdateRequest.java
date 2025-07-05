@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ContactUsUpdateRequest {
     private Title title;
-    private Description description;
+    private Description desc;
     private String imageBase64;
     private String receiverEmail;
 }

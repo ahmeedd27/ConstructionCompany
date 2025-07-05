@@ -11,9 +11,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SPartners {
-    private Title title;
-    private Description desc;
-    private List<Title> texts;
-
+public class AboutUpdateRequest {
+    private Title headerTitle;
+    private Description headerDesc;
+    private String headerImageBase64;
+    private Title storyTitle;
+    private Description storyDesc;
+    private String storyImageBase64;
+    private List<MainMembers> members;
 }

@@ -35,12 +35,12 @@ public class ContactUsService {
                 c.getHeader().getTitle().setAr(request.getTitle().getAr());
         }
 
-        if (request.getDescription() != null) {
-            if (request.getDescription().getEn() != null)
-                c.getHeader().getDesc().setEn(request.getDescription().getEn());
+        if (request.getDesc() != null) {
+            if (request.getDesc().getEn() != null)
+                c.getHeader().getDesc().setEn(request.getDesc().getEn());
 
-            if (request.getDescription().getAr() != null)
-                c.getHeader().getDesc().setAr(request.getDescription().getAr());
+            if (request.getDesc().getAr() != null)
+                c.getHeader().getDesc().setAr(request.getDesc().getAr());
         }
         if (request.getImageBase64() != null && !request.getImageBase64().isEmpty()) {
             Map<String, Object> options = ObjectUtils.asMap(

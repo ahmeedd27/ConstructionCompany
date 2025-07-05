@@ -1,7 +1,6 @@
 package com.Ahmed.SoltanSalman.project_functionality;
 
 import com.Ahmed.SoltanSalman.comman_helpers.Header;
-import com.Ahmed.SoltanSalman.comman_helpers.Image;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,7 @@ public class Project {
     private List<Achievement> achievements;
     private List<Employee> team;
     private Specification specification;
-    private List<Image> images;
     private State state;
     private Date createdAt;
+    private boolean isInvestment;
 }

@@ -1,6 +1,8 @@
 package com.Ahmed.SoltanSalman.news_functionality;
 
+import com.Ahmed.SoltanSalman.comman_helpers.Description;
 import com.Ahmed.SoltanSalman.comman_helpers.Header;
+import com.Ahmed.SoltanSalman.comman_helpers.Title;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,8 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NewRequest {
-    private Header header;
+    private Title title;
+    private Description desc;
+    private String imageBase64;
     private Article article;
     private Boolean isFeatured;
-    private String imageBase64;
+
 }

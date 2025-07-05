@@ -56,33 +56,14 @@ public class NewsService {
             throw new RuntimeException("Image upload problem");
         }
 
-        New savedNew = temp.save(New.builder()
+        return temp.save(New.builder()
                 .slug(generateSlug(request.getTitle().getEn()))
                 .header(new Header(request.getTitle(), request.getDesc(), url))
                 .article(request.getArticle())
                 .createdAt(new Date())
                 .isFeatured(request.isFeatured())
                 .build(), "News");
-        NewDto dto = NewDto.builder()
-                ._id(savedNew.get_id())
-                .slug(savedNew.getSlug())
-                .header(savedNew.getHeader())
-                .isFeatured(savedNew.getIsFeatured())
-                .createdAt(savedNew.getCreatedAt())
-                .build();
 
-        NewsPage page = temp.findOne(new Query(), NewsPage.class);
-        if (page != null) {
-            page.getNewsDtoList().add(dto);
-            temp.save(page, "NewsPage");
-        }
-        Home h = temp.findOne(new Query(), Home.class);
-        if (h != null) {
-            h.getNewsDtoList().addFirst(dto);
-            h.getNewsDtoList().removeLast();
-            temp.save(h, "Home");
-        }
-        return savedNew;
     }
 
 
@@ -95,36 +76,21 @@ public class NewsService {
         if (existed == null)
             throw new NoSuchElementException("News not found");
 
-        if (request.getHeader() != null) {
-            if (request.getHeader().getTitle() != null) {
-                if (request.getHeader().getTitle().getEn() != null)
-                    existed.getHeader().getTitle().setEn(request.getHeader().getTitle().getEn());
 
-                if (request.getHeader().getTitle().getAr() != null)
-                    existed.getHeader().getTitle().setAr(request.getHeader().getTitle().getAr());
-            }
-            if (request.getHeader().getDesc() != null) {
-                if (request.getHeader().getDesc().getEn() != null)
-                    existed.getHeader().getDesc().setEn(request.getHeader().getDesc().getEn());
+        if (request.getTitle() != null) {
+            if (request.getTitle().getEn() != null)
+                existed.getHeader().getTitle().setEn(request.getTitle().getEn());
 
-                if (request.getHeader().getDesc().getAr() != null)
-                    existed.getHeader().getDesc().setAr(request.getHeader().getDesc().getAr());
-            }
+            if (request.getTitle().getAr() != null)
+                existed.getHeader().getTitle().setAr(request.getTitle().getAr());
         }
-        if (request.getArticle() != null) {
-            Article existingArticle = existed.getArticle();
-            Article incomingArticle = request.getArticle();
-            if (incomingArticle.getEn() != null)
-                existingArticle.setEn(incomingArticle.getEn());
+        if (request.getDesc() != null) {
+            if (request.getDesc().getEn() != null)
+                existed.getHeader().getDesc().setEn(request.getDesc().getEn());
 
-            if (incomingArticle.getAr() != null)
-                existingArticle.setAr(incomingArticle.getAr());
-
-            existed.setArticle(existingArticle);
+            if (request.getDesc().getAr() != null)
+                existed.getHeader().getDesc().setAr(request.getDesc().getAr());
         }
-        if (request.getIsFeatured() != null)
-            existed.setIsFeatured(request.getIsFeatured());
-
         if (request.getImageBase64() != null && !request.getImageBase64().isEmpty()) {
             Map<String, Object> options = ObjectUtils.asMap(
                     "resource_type", "image",
@@ -140,49 +106,22 @@ public class NewsService {
                 throw new RuntimeException("Image upload problem");
             }
         }
-        New saved = temp.save(existed, "News");
 
-        //update NewsPage
-        NewsPage page = temp.findOne(new Query(), NewsPage.class);
-        if (page != null && !page.getNewsDtoList().isEmpty()) {
-            List<NewDto> list = page.getNewsDtoList();
-            for (int i = 0; i < list.size(); i++) {
-                if (slug.equals(list.get(i).getSlug())) {
-                    NewDto dto = NewDto.builder()
-                            .createdAt(saved.getCreatedAt())
-                            .isFeatured(saved.getIsFeatured())
-                            .header(saved.getHeader())
-                            .slug(saved.getSlug())
-                            .build();
-                    list.set(i, dto);
-                    break;
-                }
-            }
-            page.setNewsDtoList(list);
-            temp.save(page, "NewsPage");
+        if (request.getArticle() != null) {
+            Article existingArticle = existed.getArticle();
+            Article incomingArticle = request.getArticle();
+            if (incomingArticle.getEn() != null)
+                existingArticle.setEn(incomingArticle.getEn());
+
+            if (incomingArticle.getAr() != null)
+                existingArticle.setAr(incomingArticle.getAr());
+
+            existed.setArticle(existingArticle);
         }
+        if (request.getIsFeatured() != null)
+            existed.setIsFeatured(request.getIsFeatured());
 
-        //update Home Page
-        Home h = temp.findOne(new Query(), Home.class);
-        if (h != null && !h.getNewsDtoList().isEmpty()) {
-            List<NewDto> list = h.getNewsDtoList();
-            for (int i = 0; i < list.size(); i++) {
-                if (slug.equals(list.get(i).getSlug())) {
-                    NewDto dto = NewDto.builder()
-                            .createdAt(saved.getCreatedAt())
-                            .isFeatured(saved.getIsFeatured())
-                            .header(saved.getHeader())
-                            .slug(saved.getSlug())
-                            .build();
-                    list.set(i, dto);
-                    break;
-                }
-            }
-            h.setNewsDtoList(list);
-            temp.save(h, "Home");
-        }
-
-        return saved;
+        return temp.save(existed, "News");
     }
 
 
@@ -211,25 +150,6 @@ public class NewsService {
         if (result.getDeletedCount() == 0) {
             throw new NoSuchElementException("No news found with the given slug");
         }
-        NewsPage page = temp.findOne(new Query(), NewsPage.class);
-        Home h = temp.findOne(new Query(), Home.class);
-        if (page != null && page.getNewsDtoList() != null && !page.getNewsDtoList().isEmpty()) {
-            List<NewDto> list = page.getNewsDtoList();
-            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
-            if (removed) {
-                page.setNewsDtoList(list);
-                temp.save(page, "NewsPage");
-            }
-        }
-        if (h != null && h.getNewsDtoList() != null && !h.getNewsDtoList().isEmpty()) {
-            List<NewDto> list = h.getNewsDtoList();
-            boolean removed = list.removeIf(dto -> slug.equals(dto.getSlug()));
-            if (removed) {
-                h.setNewsDtoList(list);
-                temp.save(h, "Home");
-            }
-        }
-
         return "Deleted Successfully";
     }
 

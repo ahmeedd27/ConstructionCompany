@@ -18,7 +18,7 @@ public class NewsPageController {
 
     @Operation(summary = "Get News Page", description = "Fetch news page content including header and news list")
     @GetMapping
-    public ResponseEntity<NewsPage> getNewsPage() {
+    public ResponseEntity<NewsPageDTO> getNewsPage() {
         return ResponseEntity.ok(newsPageService.getNewsPage());
     }
 

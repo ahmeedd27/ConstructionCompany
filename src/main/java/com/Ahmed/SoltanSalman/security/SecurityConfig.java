@@ -35,12 +35,16 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
 
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://smooth-harmony-personal27-0870b30f.koyeb.app/",
-                "http://localhost:8080" , "http://localhost:3000" ,"https://constructioncompany-vstj.onrender.com/"));
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://sultan-construction.site",
+                "https://www.sultan-construction.site", // لازم ده يتضاف
+                "https://api.sultan-construction.site",
+                "http://localhost:3000",
+                "http://localhost:8080"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

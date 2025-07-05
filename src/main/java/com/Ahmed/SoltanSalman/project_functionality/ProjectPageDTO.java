@@ -1,18 +1,18 @@
-package com.Ahmed.SoltanSalman.news_functionality;
+package com.Ahmed.SoltanSalman.project_functionality;
 
 import com.Ahmed.SoltanSalman.comman_helpers.Header;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "NewsPage")
-public class NewsPage {
-    private String _id;
+@Builder
+public class ProjectPageDTO {
     private Header header;
+    private List<ProjectDTO> projects;
 }
